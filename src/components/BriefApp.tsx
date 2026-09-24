@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState, type ReactNode } from "react";
+import { useMemo, useRef, useState, type ReactNode } from "react";
 import { briefToMarkdown } from "@/lib/format";
 import type { BriefResult, Severity } from "@/lib/types";
 
@@ -19,8 +19,14 @@ export function BriefApp() {
   const [result, setResult] = useState<BriefResult | null>(null);
   const [activeCitation, setActiveCitation] = useState<string | null>(null);
   const [copied, setCopied] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const markdown = useMemo(() => (result ? briefToMarkdown(result.brief) : ""), [result]);
+
+  function clearFile() {
+    setFile(null);
+    if (fileInputRef.current) fileInputRef.current.value = "";
+  }
 
   async function analyze(next: { file: File | null; text: string; question: string }) {
     setLoading(true);
@@ -56,7 +62,7 @@ export function BriefApp() {
   async function loadSampleChat() {
     const response = await fetch("/samples/whatsapp.txt");
     const sample = await response.text();
-    setFile(null);
+    clearFile();
     setText(sample);
     await analyze({ file: null, text: sample, question });
   }
@@ -113,6 +119,7 @@ export function BriefApp() {
             <span className="font-medium text-ink">Drop a campus PDF</span>
             <span className="mt-1 text-sm text-muted">or click to choose a file, up to 8 MB</span>
             <input
+              ref={fileInputRef}
               className="sr-only"
               type="file"
               accept="application/pdf,.pdf"
@@ -124,7 +131,7 @@ export function BriefApp() {
               <span>
                 Using <strong>{file.name}</strong>
               </span>
-              <button type="button" className="text-copper underline" onClick={() => setFile(null)}>
+              <button type="button" className="text-copper underline" onClick={clearFile}>
                 Remove
               </button>
             </p>
@@ -138,7 +145,7 @@ export function BriefApp() {
             value={text}
             onChange={(event) => {
               setText(event.target.value);
-              if (event.target.value.trim()) setFile(null);
+              if (event.target.value.trim()) clearFile();
             }}
             rows={8}
             placeholder="exam form last date 2 oct 5pm..."

@@ -164,7 +164,7 @@ export function findDates(text: string, defaultYear = 2026): FoundDate[] {
 
 export function stripWhatsAppChrome(text: string): string {
   return text.replace(
-    /\[\d{1,2}[\/.\-]\d{1,2}[\/.\-]\d{2,4},\s*\d{1,2}:\d{2}(?:\s*[ap]m)?\]\s*[^:\n]{0,60}:\s*/gi,
+    /\[\d{1,2}[\/.\-]\d{1,2}[\/.\-]\d{2,4},\s*\d{1,2}:\d{2}(?::\d{2})?(?:\s*[ap]m)?\]\s*[^:\n]{0,60}:\s*/gi,
     "",
   );
 }

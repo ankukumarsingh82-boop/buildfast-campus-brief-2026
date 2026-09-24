@@ -53,6 +53,11 @@ describe("campus notice parsing", () => {
     const stripped = stripWhatsAppChrome(whatsapp);
     expect(stripped).not.toMatch(/21\/09\/26/);
     expect(findDates(stripped).some((date) => date.iso === "2026-09-21")).toBe(false);
+    const withSeconds = whatsapp.replace("9:14 pm", "9:14:45 pm");
+    const strippedSeconds = stripWhatsAppChrome(withSeconds);
+    expect(strippedSeconds).not.toMatch(/21\/09\/26/);
+    expect(findDates(strippedSeconds).some((date) => date.iso === "2026-09-21")).toBe(false);
+    expect(briefFrom(withSeconds).deadlines.some((item) => item.isoDate === "2026-09-21")).toBe(false);
     const brief = briefFrom(whatsapp);
     expect(brief.title).toBe("Class chat brief");
     expect(brief.deadlines.some((item) => item.isoDate === "2026-09-21")).toBe(false);
